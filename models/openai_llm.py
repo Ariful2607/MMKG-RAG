@@ -1,15 +1,15 @@
 from openai import OpenAI
 from models.base_llm import BaseLLM
 from models.response import LLMResponse
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 class OpenAILLM(BaseLLM):
-    def __init__(
-        self,
-        api_key: str,
-        model: str,
-    ):
+    def __init__(self, model):
         self.client = OpenAI(
-            api_key=api_key,
+            api_key=os.getenv("OPENAI_API_KEY")
         )
         self.model = model
     

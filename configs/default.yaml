@@ -14,9 +14,9 @@ parser:
   image_format: png
 
 llm:
-  provider: openai
-  model: gpt-4o-mini
-  temperature: 0.0
+  backend: ollama
+  model: qwen2.5:7b
+  temperature: 0
   max_tokens: 4096
 
 embedding:
