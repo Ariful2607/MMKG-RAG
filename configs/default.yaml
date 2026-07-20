@@ -1,0 +1,27 @@
+project:
+  name: MegaRAG++
+  version: 0.1.0
+  seed: 42
+
+paths:
+  raw_data: data/raw
+  processed_data: data/processed
+  cache: data/cache
+  output: outputs
+
+parser:
+  dpi: 200
+  image_format: png
+
+llm:
+  provider: openai
+  model: gpt-4o-mini
+  temperature: 0.0
+  max_tokens: 4096
+
+embedding:
+  provider: sentence-transformers
+  model: BAAI/bge-base-en-v1.5
+
+retrieval:
+  top_k: 5

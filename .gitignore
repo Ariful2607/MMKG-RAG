@@ -1,0 +1,22 @@
+# Virtual Env
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# Data
+data/cache/
+outputs/
+
+# Environment
+.env
+
+# macOS
+.DS_Store
