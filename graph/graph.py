@@ -2,26 +2,50 @@ import networkx as nx
 from graph.entity import Entity
 from graph.relation import Relation
 
-
 class KnowledgeGraph:
     def __init__(self):
         self.entities = {}
         self.relations = []
         self.graph = nx.MultiDiGraph()
 
+    ##################################################
+    # Entity
+    ##################################################
+
     def add_entity(self, entity: Entity):
         if entity.id in self.entities:
             return
+
         self.entities[entity.id] = entity
+
         self.graph.add_node(
             entity.id,
-            **entity.__dict__,
+            name=entity.name,
+            entity_type=entity.entity_type,
+            description=entity.description,
+            source_page=entity.source_page,
+            modality=entity.modality,
+            image_path=entity.image_path,
+            caption=entity.caption,
+            confidence=entity.confidence,
+            metadata=entity.metadata,
         )
 
+    ##################################################
+    # Relation
+    ##################################################
+
     def add_relation(self, relation: Relation):
-        if relation.source not in self.graph:
+        if relation.source not in self.entities:
+            print(
+                f"Skip source '{relation.source}'"
+            )
             return
-        if relation.target not in self.graph:
+
+        if relation.target not in self.entities:
+            print(
+                f"Skip target '{relation.target}'"
+            )
             return
 
         self.relations.append(relation)
@@ -29,21 +53,29 @@ class KnowledgeGraph:
             relation.source,
             relation.target,
             relation=relation.relation,
-            confidence=relation.confidence,
-            source=relation.source,
             description=relation.description,
+            confidence=relation.confidence,
+            source_page=relation.source_page,
         )
+
+    ##################################################
+    # Getter
+    ##################################################
 
     def get_entity(self, entity_id):
         return self.entities.get(entity_id)
 
+    ##################################################
+    # Statistics
+    ##################################################
+
     @property
     def num_entities(self):
-        return self.graph.number_of_nodes()
+        return len(self.entities)
 
     @property
     def num_relations(self):
-        return self.graph.number_of_edges()
+        return len(self.relations)
 
     def statistics(self):
         return {

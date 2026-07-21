@@ -35,16 +35,34 @@ class RelationExtractor:
         if isinstance(data, dict):
             data = data.get("relations", [])
 
+        # Valid entity names (case-insensitive)
+        valid_entities = {
+            e.name.lower(): e.name
+            for e in entities
+        }
+
         relations = []
 
         for item in data:
-
             source = item.get("source", "").strip()
             target = item.get("target", "").strip()
             relation = item.get("relation", "").strip()
 
             if not source or not target or not relation:
                 continue
+
+            # ---------- VALIDATION ----------
+            if source.lower() not in valid_entities:
+                print(f"Skip invalid source: {source}")
+                continue
+
+            if target.lower() not in valid_entities:
+                print(f"Skip invalid target: {target}")
+                continue
+
+            # Gunakan nama canonical dari entity extractor
+            source = valid_entities[source.lower()]
+            target = valid_entities[target.lower()]
 
             relations.append(
                 Relation(

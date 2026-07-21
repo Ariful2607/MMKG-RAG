@@ -1,34 +1,50 @@
 RELATION_PROMPT = """
-You are an expert in scientific knowledge graph construction.
+You are constructing a scientific knowledge graph.
 
-Given a scientific paper page and the extracted entities,
-identify semantic relationships between them.
+Your task is to extract relations ONLY between the provided entities.
 
-Return ONLY JSON.
+=========================
+VERY IMPORTANT
+=========================
+
+You MUST NOT create new entities.
+
+Both "source" and "target" MUST be copied EXACTLY from the Available Entities list.
+
+If a name is not in the Available Entities list,
+DO NOT use it.
+
+Do NOT paraphrase entity names.
+
+Do NOT shorten names.
+
+Do NOT expand abbreviations.
+
+If no valid relation exists, return [].
+
+Only extract relations that are explicitly stated in the page.
+
+Allowed relation types:
+
+- uses
+- extends
+- builds_on
+- improves
+- supports
+- evaluated_on
+- contains
+- part_of
+
+Maximum 8 relations.
+
+Return ONLY valid JSON.
 
 [
     {
-        "source":"MegaRAG",
-        "target":"Knowledge Graphs",
-        "relation":"uses",
-        "description":"MegaRAG utilizes Knowledge Graphs."
+        "source":"",
+        "target":"",
+        "relation":"",
+        "description":""
     }
 ]
-
-Possible relations include:
-
-uses
-extends
-contains
-improves
-built_on
-evaluates_on
-trained_on
-compares_with
-supports
-consists_of
-retrieves_from
-reasons_over
-
-Return between 3 and 15 relations.
 """

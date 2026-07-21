@@ -2,6 +2,8 @@ from copy import copy
 
 from preprocessing.cleaner import TextCleaner
 from preprocessing.chunker import TextChunker
+from graph.entity_resolver import EntityResolver
+from graph.relation import Relation
 
 
 class GraphBuilder:
@@ -13,16 +15,21 @@ class GraphBuilder:
         graph,
         cfg,
     ):
-
         self.entity_extractor = entity_extractor
         self.relation_extractor = relation_extractor
         self.graph = graph
         self.cfg = cfg
 
+        self.resolver = EntityResolver()
+
         self.chunker = TextChunker(
             cfg.preprocessing.chunk_size,
             cfg.preprocessing.overlap,
         )
+
+    ##################################################
+    # Process One Page
+    ##################################################
 
     def process_page(self, page):
 
@@ -39,7 +46,6 @@ class GraphBuilder:
 
             print(f"\n========== Chunk {idx}/{len(chunks)} ==========")
 
-            # jangan ubah page asli
             chunk_page = copy(page)
             chunk_page.text = chunk
 
@@ -51,17 +57,12 @@ class GraphBuilder:
 
             print(f"Extracted {len(entities)} entities")
 
-            entity_lookup = {}
-
             for entity in entities:
-
-                print(
-                    f"  • {entity.name} ({entity.entity_type})"
-                )
-
                 self.graph.add_entity(entity)
 
-                entity_lookup[entity.name.lower()] = entity
+            entity_lookup = self.resolver.build_lookup(
+                entities
+            )
 
             ##################################################
             # Relation Extraction
@@ -74,17 +75,25 @@ class GraphBuilder:
 
             print(f"Extracted {len(relations)} relations")
 
+            added_relations = 0
+
             for relation in relations:
 
-                source = entity_lookup.get(
-                    relation.source.lower()
+                source_entity = self.resolver.resolve(
+                    relation.source,
+                    entity_lookup,
                 )
 
-                target = entity_lookup.get(
-                    relation.target.lower()
+                target_entity = self.resolver.resolve(
+                    relation.target,
+                    entity_lookup,
                 )
 
-                if source is None:
+                ##################################################
+                # Skip missing entity
+                ##################################################
+
+                if source_entity is None:
 
                     print(
                         f"  Skip: source entity "
@@ -93,7 +102,7 @@ class GraphBuilder:
 
                     continue
 
-                if target is None:
+                if target_entity is None:
 
                     print(
                         f"  Skip: target entity "
@@ -102,22 +111,49 @@ class GraphBuilder:
 
                     continue
 
+                ##################################################
+                # Debug
+                ##################################################
+
                 print(
-                    f"  • {relation.source}"
+                    f"  • {source_entity.name}"
                     f" --{relation.relation}--> "
-                    f"{relation.target}"
+                    f"{target_entity.name}"
                 )
 
-                self.graph.add_relation(relation)
+                ##################################################
+                # Convert Name -> Internal ID
+                ##################################################
+
+                graph_relation = Relation(
+                    source=source_entity.id,
+                    target=target_entity.id,
+                    relation=relation.relation,
+                    description=relation.description,
+                    confidence=relation.confidence,
+                    source_page=relation.source_page,
+                )
+
+                self.graph.add_relation(graph_relation)
+
+                added_relations += 1
 
             total_entities += len(entities)
-            total_relations += len(relations)
+            total_relations += added_relations
 
-        print(
-            f"\nPage {page.page_number} Summary"
-        )
+        ##################################################
+        # Page Summary
+        ##################################################
+
+        print(f"\nPage {page.page_number} Summary")
+
         print(f"Entities : {total_entities}")
+
         print(f"Relations: {total_relations}")
+
+    ##################################################
+    # Process Whole Document
+    ##################################################
 
     def process_document(self, document):
 
@@ -135,6 +171,10 @@ class GraphBuilder:
             print("=" * 60)
 
             self.process_page(page)
+
+        ##################################################
+        # Graph Statistics
+        ##################################################
 
         print("\n========== Graph Statistics ==========")
 
