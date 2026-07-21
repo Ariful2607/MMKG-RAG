@@ -1,15 +1,9 @@
 import json
-import re
 
-def extract_json(text):
-
-    match = re.search(
-        r"\{.*\}",
-        text,
-        re.DOTALL,
-    )
-
-    if match is None:
-        raise ValueError("JSON not found")
-
-    return json.loads(match.group())
+def extract_json(text: str):
+    decoder = json.JSONDecoder()
+    start = text.find("{")
+    if start == -1:
+        raise ValueError("No JSON found.")
+    obj, _ = decoder.raw_decode(text[start:])
+    return obj

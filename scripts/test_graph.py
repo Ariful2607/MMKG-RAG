@@ -1,32 +1,24 @@
-from graph.entity import Entity
-from graph.relation import Relation
+from omegaconf import OmegaConf
+from parser.pdf_parser import PDFParser
+from models.factory import create_model
+from extraction.entity_extractor import EntityExtractor
 from graph.graph import KnowledgeGraph
+from graph.graph_builder import GraphBuilder
 
-kg = KnowledgeGraph()
-
-kg.add_entity(
-    Entity(
-        id="E1",
-        name="Transformer",
-        entity_type="Model",
+def main():
+    cfg = OmegaConf.load("configs/default.yaml")
+    model = create_model(cfg)
+    extractor = EntityExtractor(model)
+    graph = KnowledgeGraph()
+    builder = GraphBuilder(
+        extractor=extractor,
+        graph=graph,
     )
-)
+    parser = PDFParser("data/raw/sample.pdf")
+    document = parser.parse()
+    builder.process_document(document)
+    stats = graph.statistics()
+    print(stats)
 
-kg.add_entity(
-    Entity(
-        id="E2",
-        name="Attention",
-        entity_type="Concept",
-    )
-)
-
-kg.add_relation(
-    Relation(
-        source="E1",
-        target="E2",
-        relation="uses",
-    )
-)
-
-print("Entities :", kg.num_entities)
-print("Relations:", kg.num_relations)
+if __name__ == "__main__":
+    main()

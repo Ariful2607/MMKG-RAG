@@ -1,38 +1,35 @@
 ENTITY_PROMPT = """
 You are an expert information extraction system.
 
-Analyze BOTH:
+Extract at most 15 important entities.
 
-1. Page text
-2. Page image
+Each entity must have:
 
-Extract every entity mentioned or visually present.
+- id
+- name
+- entity_type
 
-Entity types include:
+Ignore author emails.
 
-- Person
-- Organization
-- Location
-- Dataset
-- Method
-- Model
-- Task
-- Metric
-- Software
-- Other
+Ignore references.
+
+Ignore page numbers.
 
 Return ONLY valid JSON.
+
+No markdown.
+
+No explanation.
 
 Schema:
 
 {
-  "entities":[
-    {
-      "id":"",
-      "name":"",
-      "entity_type":"",
-      "description":""
-    }
-  ]
+    "entities":[
+        {
+            "id":"",
+            "name":"",
+            "entity_type":""
+        }
+    ]
 }
 """

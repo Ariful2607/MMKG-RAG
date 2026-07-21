@@ -1,10 +1,10 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 class EntitySchema(BaseModel):
-    id: str = Field(...)
-    name: str = Field(...)
-    entity_type: str = Field(...)
-    description: str = Field(default="")
+    id: str
+    name: str
+    entity_type: str
+    description: str
 
 class EntityListSchema(BaseModel):
     entities: list[EntitySchema]

@@ -36,3 +36,11 @@ class KnowledgeGraph:
     @property
     def num_relations(self):
         return self.graph.number_of_edges()
+    
+    def statistics(self):
+        return {
+            "num_entities": len(self.entities),
+            "num_relations": len(self.relations),
+            "num_nodes": self.graph.number_of_nodes(),
+            "num_edges": self.graph.number_of_edges(),
+    }

@@ -1,36 +1,39 @@
-import json
-
 from graph.entity import Entity
 from extraction.schema import EntityListSchema
+from utils.json_parser import extract_json
 from prompts.entity_prompt import ENTITY_PROMPT
 
-from utils.json_parser import extract_json
-
 class EntityExtractor:
-    def __init__(self, llm):
-        self.llm = llm
+    def __init__(self, model):
+        self.model = model
+    
     def extract(self, page):
-        prompt = ENTITY_PROMPT.format(
-            page=page.text
-        )
-        response = self.llm.generate(
+
+        response = self.model.generate(
             image=page.image_path,
             text=page.text,
-            prompt=prompt,
+            prompt=ENTITY_PROMPT,
         )
 
-        data = extract_json(response.text)
+        try:
+            data = extract_json(response.text)
+            schema = EntityListSchema(**data)
 
-        result = EntityListSchema.model_validate(data)
+        except Exception as e:
+            print("Entity extraction failed:", e)
+            return []
+
         entities = []
 
-        for item in result.entities:
+        for e in schema.entities:
             entities.append(
                 Entity(
-                    id=item.id,
-                    name=item.name,
-                    entity_type=item.entity_type,
-                    description=item.description,
+                    id=e.id,
+                    name=e.name,
+                    entity_type=e.entity_type,
+                    description=e.description,
+                    source_page=page.page_number,
                 )
             )
+
         return entities
