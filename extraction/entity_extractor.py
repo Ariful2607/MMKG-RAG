@@ -13,18 +13,13 @@ class EntityExtractor:
         prompt = ENTITY_PROMPT.format(
             page=page.text
         )
-        response = model.generate(
-        image=page.image_path,
-        text=page.text,
-        prompt=ENTITY_PROMPT,
-    )
+        response = self.llm.generate(
+            image=page.image_path,
+            text=page.text,
+            prompt=prompt,
+        )
 
-    data = extract_json(response.text)
-        # response = self.llm.generate(prompt)
-        # from extraction.parser import extract_json
-        # data = extract_json(
-        #     response.text
-        # )
+        data = extract_json(response.text)
 
         result = EntityListSchema.model_validate(data)
         entities = []
