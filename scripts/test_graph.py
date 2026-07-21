@@ -1,25 +1,48 @@
 from omegaconf import OmegaConf
+
 from parser.pdf_parser import PDFParser
 from models.factory import create_model
+
 from extraction.entity_extractor import EntityExtractor
+from extraction.relation_extractor import RelationExtractor
+
 from graph.graph import KnowledgeGraph
 from graph.graph_builder import GraphBuilder
 
+
 def main():
+
     cfg = OmegaConf.load("configs/default.yaml")
+
+    # Load Model
     model = create_model(cfg)
-    extractor = EntityExtractor(model)
+
+    # Extractors
+    entity_extractor = EntityExtractor(model)
+    relation_extractor = RelationExtractor(model)
+
+    # Graph
     graph = KnowledgeGraph()
+
+    # Graph Builder
     builder = GraphBuilder(
-        extractor=extractor,
+        entity_extractor=entity_extractor,
+        relation_extractor=relation_extractor,
         graph=graph,
         cfg=cfg,
     )
+
+    # Parse PDF
     parser = PDFParser("data/raw/sample.pdf")
     document = parser.parse()
+
+    # Build Graph
     builder.process_document(document)
-    stats = graph.statistics()
-    print(stats)
+
+    # Statistics
+    print("\n========== Graph Statistics ==========")
+    print(graph.statistics())
+
 
 if __name__ == "__main__":
     main()
