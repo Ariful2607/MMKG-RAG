@@ -6,23 +6,27 @@ from graph.relation import Relation
 
 class KnowledgeGraph:
     def __init__(self):
+        self.entities = {}
+        self.relations = []
         self.graph = nx.MultiDiGraph()
     
-    def add_entity(self, entity: Entity):
+    def add_entity(self, entity):
+        if entity.id in self.entities:
+            return
+        self.entities[entity.id] = entity
         self.graph.add_node(
             entity.id,
-            name=entity.name,
-            entity_type=entity.entity_type,
-            description=entity.description,
-            attributes=entity.attributes,
+            **entity.__dict__,
         )
     
-    def add_relation(self, relation: Relation):
+    def add_relation(self, relation):
+        self.relations.append(relation)
         self.graph.add_edge(
-            relation.source,
-            relation.target,
+            relation.head,
+            relation.tail,
             relation=relation.relation,
             confidence=relation.confidence,
+            source=relation.source,
         )
 
     @property
