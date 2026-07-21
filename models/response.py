@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 
 @dataclass
-class LLMResponse:
+class ModelResponse:
     text: str
-    model: str
-    prompt_tokens: int = 0
-    completion_tokens: int = 0
+    raw: object = None
