@@ -1,19 +1,17 @@
 from parser.pdf_parser import PDFParser
-from models.ollama_llm import OllamaLLM
-from extraction.entity_extractor import EntityExtractor
+from models.factory import create_model
+from omegaconf import OmegaConf
+from prompts.entity_prompt import ENTITY_PROMPT
 
+cfg = OmegaConf.load("configs/default.yaml")
+model = create_model(cfg)
 parser = PDFParser("data/raw/sample.pdf")
-document = parser.parse()
-
-llm = OllamaLLM(
-    "qwen2.5:7b"
+doc = parser.parse()
+page = doc.pages[0]
+response = model.generate(
+    image=page.image_path,
+    text=page.text,
+    prompt=ENTITY_PROMPT,
 )
 
-extractor = EntityExtractor(llm)
-
-entities = extractor.extract(
-    document.pages[0]
-)
-
-for e in entities:
-    print(e)
+print(response.text)
