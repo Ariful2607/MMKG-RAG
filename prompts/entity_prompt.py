@@ -1,35 +1,43 @@
 ENTITY_PROMPT = """
-You are an expert information extraction system.
+You are an expert in scientific information extraction.
 
-Extract at most 15 important entities.
+Extract the most important TECHNICAL entities from this scientific paper.
 
-Each entity must have:
+Prioritize:
 
-- id
-- name
-- entity_type
+- methods
+- models
+- algorithms
+- datasets
+- benchmarks
+- tasks
+- frameworks
+- systems
+- metrics
+- concepts
 
-Ignore author emails.
+Ignore:
 
-Ignore references.
+- author names
+- affiliations
+- emails
+- page numbers
+- copyright
+- references
+- acknowledgements
 
-Ignore page numbers.
+Return between 5 and 10 entities.
 
 Return ONLY valid JSON.
 
-No markdown.
-
-No explanation.
-
-Schema:
-
 {
-    "entities":[
-        {
-            "id":"",
-            "name":"",
-            "entity_type":""
-        }
-    ]
+  "entities":[
+    {
+      "id":"",
+      "name":"",
+      "entity_type":"",
+      "description":""
+    }
+  ]
 }
 """

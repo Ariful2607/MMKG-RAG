@@ -34,3 +34,15 @@ embedding:
 
 retrieval:
   top_k: 5
+
+debug:
+    enabled: true
+    max_pages: 1
+    max_chunks_per_page: 1
+
+preprocessing:
+  chunk_size: 300
+  overlap: 50
+
+entity_extraction:
+  max_entities: 10

@@ -13,6 +13,7 @@ def main():
     builder = GraphBuilder(
         extractor=extractor,
         graph=graph,
+        cfg=cfg,
     )
     parser = PDFParser("data/raw/sample.pdf")
     document = parser.parse()
