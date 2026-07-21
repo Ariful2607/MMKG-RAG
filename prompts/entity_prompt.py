@@ -1,16 +1,29 @@
 ENTITY_PROMPT = """
-You are an expert in multimodal knowledge graphs.
+You are an expert in Multimodal Knowledge Graph construction.
 
-Extract all entities from the following page.
+Extract every meaningful entity from the page.
 
-For every entity return:
+For every entity return
 
 - id
 - name
-- type
+- entity_type
 - description
 
 Return ONLY JSON.
+
+Example
+
+{
+  "entities":[
+    {
+      "id":"E1",
+      "name":"Transformer",
+      "entity_type":"Model",
+      "description":"Attention based neural network"
+    }
+  ]
+}
 
 Page:
 
