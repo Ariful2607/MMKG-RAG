@@ -1,4 +1,5 @@
 import networkx as nx
+from graph import relation
 from graph.entity import Entity
 from graph.relation import Relation
 
@@ -8,10 +9,7 @@ class KnowledgeGraph:
         self.relations = []
         self.graph = nx.MultiDiGraph()
 
-    ##################################################
     # Entity
-    ##################################################
-
     def add_entity(self, entity: Entity):
         if entity.id in self.entities:
             return
@@ -31,10 +29,7 @@ class KnowledgeGraph:
             metadata=entity.metadata,
         )
 
-    ##################################################
     # Relation
-    ##################################################
-
     def add_relation(self, relation: Relation):
         if relation.source not in self.entities:
             print(
@@ -58,17 +53,32 @@ class KnowledgeGraph:
             source_page=relation.source_page,
         )
 
-    ##################################################
-    # Getter
-    ##################################################
+    def has_relation(
+        self,
+        source: str,
+        target: str,
+        relation: str,
+    ) -> bool:
 
+        if not self.graph.has_edge(source, target):
+            return False
+
+        for _, _, data in self.graph.edges(
+            source,
+            data=True,
+        ):
+            if (
+                data.get("relation") == relation
+            ):
+                return True
+
+        return False
+
+    # Getter
     def get_entity(self, entity_id):
         return self.entities.get(entity_id)
 
-    ##################################################
     # Statistics
-    ##################################################
-
     @property
     def num_entities(self):
         return len(self.entities)
