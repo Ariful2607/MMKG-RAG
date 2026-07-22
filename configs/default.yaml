@@ -20,13 +20,8 @@ llm:
 vlm:
   provider: huggingface
   model: Qwen/Qwen2.5-VL-7B-Instruct
-
-  # Hardware akan dipilih otomatis oleh Python
   device: auto
-
-  # dtype juga dipilih otomatis jika auto
   dtype: auto
-
   max_new_tokens: 1024
   temperature: 0.1
 
