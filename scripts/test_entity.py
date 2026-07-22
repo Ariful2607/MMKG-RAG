@@ -3,7 +3,7 @@ from models.factory import create_model
 from omegaconf import OmegaConf
 from prompts.entity_prompt import ENTITY_PROMPT
 
-cfg = OmegaConf.load("configs/default.yaml")
+cfg = OmegaConf.load("configs/config.yaml")
 model = create_model(cfg)
 parser = PDFParser("data/raw/sample.pdf")
 doc = parser.parse()

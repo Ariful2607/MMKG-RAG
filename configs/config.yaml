@@ -16,6 +16,8 @@ parser:
 llm:
   provider: huggingface
   model: Qwen/Qwen2.5-7B-Instruct
+  dtype: auto
+  max_new_tokens: 512
 
 vlm:
   provider: huggingface
@@ -37,6 +39,8 @@ embedding:
 
 retrieval:
   top_k: 5
+  hops: 1
+  max_neighbors: 20
 
 graph:
   cross_page_similarity: 0.90

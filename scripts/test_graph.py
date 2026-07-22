@@ -12,10 +12,7 @@ def main():
         "data/raw/sample.pdf"
     )
 
-    print("\nGraph Statistics")
     print(graph.statistics())
-
-    print("\n")
 
     question = "What is MegaRAG?"
 
@@ -24,20 +21,6 @@ def main():
         question,
     )
 
-    print("\nRetrieved Entities")
-
-    for entity, score in results:
-
-        print(
-            f"{entity.name:40}"
-            f"{score:.4f}"
-        )
-
-    results = pipeline.retrieve(
-    graph,
-    question,
-)
-
     subgraph = pipeline.expand(
         graph,
         results,
@@ -45,13 +28,18 @@ def main():
         max_neighbors=10,
     )
 
-    print(subgraph.statistics())
-
     context = pipeline.build_context(
         subgraph,
     )
 
-    print("\n========== Context ==========\n")
     print(context)
+
+    answer = pipeline.answer(
+        graph,
+        question,
+    )
+
+    print(answer)
+
 if __name__ == "__main__":
     main()

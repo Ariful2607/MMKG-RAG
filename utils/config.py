@@ -3,7 +3,7 @@ from omegaconf import OmegaConf
 
 class Config:
     def __init__(self,
-                 config_path="configs/default.yaml"):
+                 config_path="configs/config.yaml"):
         self.cfg = OmegaConf.load(config_path)
 
     @property
