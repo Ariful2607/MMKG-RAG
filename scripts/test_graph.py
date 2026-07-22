@@ -1,14 +1,11 @@
 from omegaconf import OmegaConf
-
 from parser.pdf_parser import PDFParser
 from models.factory import create_model
-
 from extraction.entity_extractor import EntityExtractor
 from extraction.relation_extractor import RelationExtractor
-
 from graph.graph import KnowledgeGraph
 from graph.graph_builder import GraphBuilder
-
+from graph.duplicate_merger import DuplicateMerger
 
 def main():
 
@@ -38,6 +35,9 @@ def main():
 
     # Build Graph
     builder.process_document(document)
+
+    merger = DuplicateMerger()
+    merger.merge(graph)
 
     # Statistics
     print("\n========== Graph Statistics ==========")

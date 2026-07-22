@@ -20,33 +20,13 @@ class PDFParser:
 
     def render_page(self, page_index, output_dir):
         page = self.doc.load_page(page_index)
-
         pix = page.get_pixmap(dpi=200)
-
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
-
         image_path = output_dir / f"page_{page_index+1}.png"
-
         pix.save(image_path)
 
         return image_path
-
-    # def parse(self, output_dir="data/processed/pages"):
-    #     pages = []
-
-    #     for idx in range(self.num_pages):
-    #         text = self.extract_text(idx)
-    #         image = self.render_page(idx, output_dir)
-
-    #         pages.append(
-    #             Page(
-    #                 page_number=idx + 1,
-    #                 text=text,
-    #                 image_path=image,
-    #             )
-    #         )
-    #     return pages
 
     def parse(self, output_dir="data/processed/pages"):
         document = Document(
