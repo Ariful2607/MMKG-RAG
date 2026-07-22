@@ -6,6 +6,7 @@ from graph.duplicate_merger import DuplicateMerger
 from graph.embedding_generator import EmbeddingGenerator
 from graph.cross_page_linker import CrossPageLinker
 from graph.graph_retriever import GraphRetriever
+from graph.neighbor_expander import NeighborExpander
 
 from extraction.entity_extractor import EntityExtractor
 from extraction.relation_extractor import RelationExtractor
@@ -30,8 +31,9 @@ class GraphPipeline:
         self.entity_extractor = EntityExtractor(self.vlm)
         self.relation_extractor = RelationExtractor(self.vlm)
 
-        # NEW
         self.retriever = GraphRetriever(self.embedding_model)
+
+        self.expander = NeighborExpander()
 
     ####################################################
     # Build Graph
@@ -88,4 +90,17 @@ class GraphPipeline:
             graph,
             question,
             top_k,
+        )
+    #####################################################
+    # Expand
+    #####################################################
+    
+    def expand(
+        self,
+        graph,
+        retrieval_results,
+    ):
+        return self.expander.expand(
+            graph,
+            retrieval_results,
         )

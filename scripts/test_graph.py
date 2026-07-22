@@ -33,6 +33,13 @@ def main():
             f"{score:.4f}"
         )
 
+    subgraph = pipeline.expand(
+        graph,
+        results,
+    )
+
+    print("\nSubgraph Statistics")
+    print(subgraph.statistics())
 
 if __name__ == "__main__":
     main()
