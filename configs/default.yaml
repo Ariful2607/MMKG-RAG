@@ -28,6 +28,8 @@ vlm:
 generation:
   provider: huggingface
   model: Qwen/Qwen2.5-7B-Instruct
+  max_new_tokens: 1024
+  temperature: 0.1
 
 embedding:
   provider: sentence-transformers
@@ -35,6 +37,9 @@ embedding:
 
 retrieval:
   top_k: 5
+
+graph:
+  cross_page_similarity: 0.90
 
 debug:
   enabled: true

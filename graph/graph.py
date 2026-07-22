@@ -51,6 +51,7 @@ class KnowledgeGraph:
             description=relation.description,
             confidence=relation.confidence,
             source_page=relation.source_page,
+            relation_obj=relation,
         )
 
     def has_relation(
