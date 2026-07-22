@@ -8,8 +8,10 @@ from graph.cross_page_linker import CrossPageLinker
 from graph.graph_retriever import GraphRetriever
 from graph.neighbor_expander import NeighborExpander
 
+
 from extraction.entity_extractor import EntityExtractor
 from extraction.relation_extractor import RelationExtractor
+from pipeline.context_builder import ContextBuilder
 
 from models.qwen_vl import QwenVLModel
 from models.embedding import EmbeddingModel
@@ -34,6 +36,7 @@ class GraphPipeline:
         self.retriever = GraphRetriever(self.embedding_model)
 
         self.expander = NeighborExpander()
+        self.context_builder = ContextBuilder()
 
     ####################################################
     # Build Graph
@@ -107,4 +110,17 @@ class GraphPipeline:
             retrieval_results=retrieval_results,
             hops=hops,
             max_neighbors=max_neighbors,
+        )
+    
+    ####################################################
+    # Build Context
+    ####################################################
+    
+    def build_context(
+        self,
+        subgraph,
+    ):
+
+        return self.context_builder.build(
+            subgraph,
         )

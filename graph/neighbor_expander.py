@@ -18,8 +18,6 @@ class NeighborExpander:
         subgraph = KnowledgeGraph()
 
         visited = set()
-        added_relations = set()
-
         queue = deque()
 
         ####################################################
@@ -55,7 +53,6 @@ class NeighborExpander:
                 node_id,
                 data=True,
             ):
-
                 neighbors.append(
                     (
                         neighbor_id,
@@ -71,7 +68,6 @@ class NeighborExpander:
                 node_id,
                 data=True,
             ):
-
                 neighbors.append(
                     (
                         neighbor_id,
@@ -103,21 +99,13 @@ class NeighborExpander:
 
                 neighbor = graph.entities[neighbor_id]
 
-                if neighbor.id not in subgraph.entities:
-                    subgraph.add_entity(neighbor)
+                # Add entity
+                subgraph.add_entity(neighbor)
 
-                relation_key = (
-                    relation.source,
-                    relation.target,
-                    relation.relation,
-                )
+                # Add relation
+                subgraph.add_relation(relation)
 
-                if relation_key not in added_relations:
-
-                    subgraph.add_relation(relation)
-
-                    added_relations.add(relation_key)
-
+                # Continue BFS
                 if neighbor.id not in visited:
 
                     visited.add(neighbor.id)

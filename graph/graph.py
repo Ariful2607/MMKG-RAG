@@ -32,18 +32,30 @@ class KnowledgeGraph:
     # Relation
     def add_relation(self, relation: Relation):
         if relation.source not in self.entities:
-            print(
-                f"Skip source '{relation.source}'"
-            )
+            print(f"Skip source '{relation.source}'")
             return
 
         if relation.target not in self.entities:
-            print(
-                f"Skip target '{relation.target}'"
-            )
+            print(f"Skip target '{relation.target}'")
             return
 
+        ####################################################
+        # Skip duplicate relation
+        ####################################################
+
+        if self.has_relation(
+            relation.source,
+            relation.target,
+            relation.relation,
+        ):
+            return
+
+        ####################################################
+        # Add relation
+        ####################################################
+
         self.relations.append(relation)
+
         self.graph.add_edge(
             relation.source,
             relation.target,
@@ -64,20 +76,17 @@ class KnowledgeGraph:
         if not self.graph.has_edge(source, target):
             return False
 
-        for _, _, data in self.graph.edges(
-            source,
-            data=True,
-        ):
-            if (
-                data.get("relation") == relation
-            ):
+        edge_dict = self.graph.get_edge_data(source, target)
+
+        for _, data in edge_dict.items():
+            if data.get("relation") == relation:
                 return True
 
         return False
 
-    # Getter
-    def get_entity(self, entity_id):
-        return self.entities.get(entity_id)
+        # Getter
+        def get_entity(self, entity_id):
+            return self.entities.get(entity_id)
 
     # Statistics
     @property

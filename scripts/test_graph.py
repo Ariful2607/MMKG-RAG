@@ -47,5 +47,11 @@ def main():
 
     print(subgraph.statistics())
 
+    context = pipeline.build_context(
+        subgraph,
+    )
+
+    print("\n========== Context ==========\n")
+    print(context)
 if __name__ == "__main__":
     main()
