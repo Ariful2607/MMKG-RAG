@@ -1,33 +1,62 @@
 import torch
-from qwen_vl_utils import process_vision_info
-from models.response import ModelResponse
 from PIL import Image
 from transformers import (
     AutoProcessor,
     Qwen2_5_VLForConditionalGeneration,
 )
+from qwen_vl_utils import process_vision_info
+
 from models.base_model import BaseModel
+from models.response import ModelResponse
 
 class QwenVLModel(BaseModel):
+
     def __init__(self, cfg):
         self.cfg = cfg
+
         print("Loading Qwen2.5-VL...")
-        
+
         self.processor = AutoProcessor.from_pretrained(
             cfg.vlm.model
         )
 
+        # -------------------------------------------------
+        # Select dtype automatically
+        # -------------------------------------------------
+        dtype_cfg = cfg.vlm.dtype
+
+        if dtype_cfg == "auto":
+
+            if torch.cuda.is_available():
+                torch_dtype = torch.bfloat16
+
+            elif torch.backends.mps.is_available():
+                torch_dtype = torch.float16
+
+            else:
+                torch_dtype = torch.float32
+
+        else:
+            torch_dtype = getattr(torch, dtype_cfg)
+
+        # -------------------------------------------------
+
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
             cfg.vlm.model,
-            torch_dtype=torch.bfloat16,
+            torch_dtype=torch_dtype,
             device_map="auto",
         )
 
         self.device = next(self.model.parameters()).device
+
+        print(f"Device : {self.device}")
+        print(f"DType  : {torch_dtype}")
         print("Model Loaded.")
 
     def generate(self, image, text="", prompt=""):
+
         img = Image.open(image).convert("RGB")
+
         messages = [
             {
                 "role": "user",
@@ -63,9 +92,11 @@ class QwenVLModel(BaseModel):
         inputs = inputs.to(self.device)
 
         with torch.inference_mode():
+
             output_ids = self.model.generate(
                 **inputs,
-                max_new_tokens=1024,
+                max_new_tokens=self.cfg.vlm.max_new_tokens,
+                do_sample=False,
             )
 
         generated_ids = [
