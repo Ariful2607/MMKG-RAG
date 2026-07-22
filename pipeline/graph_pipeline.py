@@ -99,8 +99,12 @@ class GraphPipeline:
         self,
         graph,
         retrieval_results,
+        hops=1,
+        max_neighbors=None,
     ):
         return self.expander.expand(
-            graph,
-            retrieval_results,
+            graph=graph,
+            retrieval_results=retrieval_results,
+            hops=hops,
+            max_neighbors=max_neighbors,
         )

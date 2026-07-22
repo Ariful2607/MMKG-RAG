@@ -33,12 +33,18 @@ def main():
             f"{score:.4f}"
         )
 
+    results = pipeline.retrieve(
+    graph,
+    question,
+)
+
     subgraph = pipeline.expand(
         graph,
         results,
+        hops=2,
+        max_neighbors=10,
     )
 
-    print("\nSubgraph Statistics")
     print(subgraph.statistics())
 
 if __name__ == "__main__":

@@ -1,3 +1,5 @@
+from collections import deque
+
 from graph.graph import KnowledgeGraph
 
 
@@ -7,6 +9,8 @@ class NeighborExpander:
         self,
         graph,
         retrieval_results,
+        hops=1,
+        max_neighbors=None,
     ):
 
         print("\n========== Neighbor Expansion ==========")
@@ -14,9 +18,12 @@ class NeighborExpander:
         subgraph = KnowledgeGraph()
 
         visited = set()
+        added_relations = set()
+
+        queue = deque()
 
         ####################################################
-        # copy retrieved entities
+        # Initialize queue
         ####################################################
 
         for entity, _ in retrieval_results:
@@ -25,45 +32,102 @@ class NeighborExpander:
 
             visited.add(entity.id)
 
+            queue.append((entity.id, 0))
+
         ####################################################
-        # expand neighbors
+        # BFS
         ####################################################
 
-        for entity, _ in retrieval_results:
+        while queue:
+
+            node_id, depth = queue.popleft()
+
+            if depth >= hops:
+                continue
+
+            neighbors = []
+
+            ####################################################
+            # Outgoing edges
+            ####################################################
 
             for _, neighbor_id, edge_data in graph.graph.out_edges(
-                entity.id,
+                node_id,
                 data=True,
             ):
 
-                neighbor = graph.entities[neighbor_id]
+                neighbors.append(
+                    (
+                        neighbor_id,
+                        edge_data["relation_obj"],
+                    )
+                )
 
-                if neighbor.id not in visited:
-
-                    subgraph.add_entity(neighbor)
-
-                    visited.add(neighbor.id)
-
-                relation = edge_data["relation_obj"]
-
-                subgraph.add_relation(relation)
+            ####################################################
+            # Incoming edges
+            ####################################################
 
             for neighbor_id, _, edge_data in graph.graph.in_edges(
-                entity.id,
+                node_id,
                 data=True,
             ):
 
+                neighbors.append(
+                    (
+                        neighbor_id,
+                        edge_data["relation_obj"],
+                    )
+                )
+
+            ####################################################
+            # Sort by confidence
+            ####################################################
+
+            neighbors.sort(
+                key=lambda x: x[1].confidence,
+                reverse=True,
+            )
+
+            ####################################################
+            # Limit neighbors
+            ####################################################
+
+            if max_neighbors is not None:
+                neighbors = neighbors[:max_neighbors]
+
+            ####################################################
+            # Expand
+            ####################################################
+
+            for neighbor_id, relation in neighbors:
+
                 neighbor = graph.entities[neighbor_id]
+
+                if neighbor.id not in subgraph.entities:
+                    subgraph.add_entity(neighbor)
+
+                relation_key = (
+                    relation.source,
+                    relation.target,
+                    relation.relation,
+                )
+
+                if relation_key not in added_relations:
+
+                    subgraph.add_relation(relation)
+
+                    added_relations.add(relation_key)
 
                 if neighbor.id not in visited:
 
-                    subgraph.add_entity(neighbor)
-
                     visited.add(neighbor.id)
 
-                relation = edge_data["relation_obj"]
-
-                subgraph.add_relation(relation)
+                    queue.append(
+                        (
+                            neighbor.id,
+                            depth + 1,
+                        )
+                    )
 
         print(subgraph.statistics())
 
