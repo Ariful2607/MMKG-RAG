@@ -5,6 +5,7 @@ from graph.graph_builder import GraphBuilder
 from graph.duplicate_merger import DuplicateMerger
 from graph.embedding_generator import EmbeddingGenerator
 from graph.cross_page_linker import CrossPageLinker
+from graph.graph_retriever import GraphRetriever
 
 from extraction.entity_extractor import EntityExtractor
 from extraction.relation_extractor import RelationExtractor
@@ -23,19 +24,18 @@ class GraphPipeline:
         print("Initializing Models...")
         print("=" * 70)
 
-        # ----------------------------
-        # Models
-        # ----------------------------
-
         self.vlm = QwenVLModel(cfg)
         self.embedding_model = EmbeddingModel(cfg)
 
-        # ----------------------------
-        # Extractors
-        # ----------------------------
-
         self.entity_extractor = EntityExtractor(self.vlm)
         self.relation_extractor = RelationExtractor(self.vlm)
+
+        # NEW
+        self.retriever = GraphRetriever(self.embedding_model)
+
+    ####################################################
+    # Build Graph
+    ####################################################
 
     def build(self, pdf_path):
 
@@ -43,23 +43,11 @@ class GraphPipeline:
         print("Building Knowledge Graph")
         print("=" * 70)
 
-        # ----------------------------
-        # Parse PDF
-        # ----------------------------
-
         parser = PDFParser(pdf_path)
 
         document = parser.parse()
 
-        # ----------------------------
-        # Empty Graph
-        # ----------------------------
-
         graph = KnowledgeGraph()
-
-        # ----------------------------
-        # Build Graph
-        # ----------------------------
 
         builder = GraphBuilder(
             entity_extractor=self.entity_extractor,
@@ -70,34 +58,34 @@ class GraphPipeline:
 
         graph = builder.process_document(document)
 
-        # ----------------------------
-        # Duplicate Merge
-        # ----------------------------
-
-        print("\n========== Duplicate Merge ==========")
-
         DuplicateMerger().merge(graph)
-
-        # ----------------------------
-        # Generate Embeddings
-        # ----------------------------
 
         EmbeddingGenerator(
             self.embedding_model
         ).generate(graph)
 
-        # ----------------------------
-        # Cross-page Linking
-        # ----------------------------
-
         CrossPageLinker(
             threshold=self.cfg.graph.cross_page_similarity
         ).link(graph)
 
-        print("\n========== Final Graph ==========")
-
-        stats = graph.statistics()
-
-        print(stats)
-
         return graph
+
+    ####################################################
+    # Retrieve
+    ####################################################
+
+    def retrieve(
+        self,
+        graph,
+        question,
+        top_k=None,
+    ):
+
+        if top_k is None:
+            top_k = self.cfg.retrieval.top_k
+
+        return self.retriever.retrieve(
+            graph,
+            question,
+            top_k,
+        )

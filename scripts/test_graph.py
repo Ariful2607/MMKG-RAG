@@ -12,7 +12,26 @@ def main():
         "data/raw/sample.pdf"
     )
 
+    print("\nGraph Statistics")
     print(graph.statistics())
+
+    print("\n")
+
+    question = "What is MegaRAG?"
+
+    results = pipeline.retrieve(
+        graph,
+        question,
+    )
+
+    print("\nRetrieved Entities")
+
+    for entity, score in results:
+
+        print(
+            f"{entity.name:40}"
+            f"{score:.4f}"
+        )
 
 
 if __name__ == "__main__":
