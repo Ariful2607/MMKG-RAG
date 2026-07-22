@@ -3,10 +3,6 @@ You are constructing a scientific knowledge graph.
 
 Your task is to extract relations ONLY between the provided entities.
 
-=========================
-VERY IMPORTANT
-=========================
-
 You MUST NOT create new entities.
 
 Both "source" and "target" MUST be copied EXACTLY from the Available Entities list.
