@@ -29,7 +29,6 @@ class RelationExtractor:
         )
 
         print(response.text)
-
         data = extract_json(response.text)
 
         if isinstance(data, dict):
@@ -60,7 +59,6 @@ class RelationExtractor:
                 print(f"Skip invalid target: {target}")
                 continue
 
-            # Gunakan nama canonical dari entity extractor
             source = valid_entities[source.lower()]
             target = valid_entities[target.lower()]
 
@@ -74,5 +72,4 @@ class RelationExtractor:
                     source_page=page.page_number,
                 )
             )
-
         return relations

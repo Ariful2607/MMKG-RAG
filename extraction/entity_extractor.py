@@ -8,29 +8,20 @@ class EntityExtractor:
         self.model = model
 
     def extract(self, page):
-
         response = self.model.generate(
             image=page.image_path,
             text=page.text,
             prompt=ENTITY_PROMPT,
         )
-
         print("=" * 80)
         print(response.text)
         print("=" * 80)
 
         try:
-
             data = extract_json(response.text)
-
             print(data)
-
-            ##################################################
             # Normalize LLM output
-            ##################################################
-
             if isinstance(data, dict):
-
                 if "entities" in data:
                     entities_data = data["entities"]
 
@@ -41,42 +32,25 @@ class EntityExtractor:
                     entities_data = []
 
             elif isinstance(data, list):
-
                 entities_data = data
 
             else:
-
                 entities_data = []
 
         except Exception as e:
-
             print("Entity extraction failed:", e)
-
             return []
 
-        ##################################################
         # Build Entity Objects
-        ##################################################
-
         entities = []
 
         for idx, item in enumerate(entities_data):
-
             entity = Entity(
-
-                # Internal ID dibuat oleh sistem
                 id=f"p{page.page_number}_e{idx}",
-
                 name=item.get("name", "").strip(),
-
                 entity_type=item.get("entity_type", "").strip(),
-
                 description=item.get("description", "").strip(),
-
                 source_page=page.page_number,
-
             )
-
             entities.append(entity)
-
         return entities

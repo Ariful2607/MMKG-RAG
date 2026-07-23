@@ -12,31 +12,22 @@ class CrossPageLinker:
         added = 0
         for i, entity1 in enumerate(entities):
             for entity2 in entities[i + 1:]:
-
-                # --------------------------
                 # Skip same page
-                # --------------------------
                 if entity1.source_page == entity2.source_page:
                     continue
 
-                # --------------------------
                 # Skip different types
-                # --------------------------
                 if entity1.entity_type != entity2.entity_type:
                     continue
 
-                # --------------------------
                 # Skip missing embedding
-                # --------------------------
                 if entity1.embedding is None:
                     continue
 
                 if entity2.embedding is None:
                     continue
 
-                # --------------------------
                 # Cosine similarity
-                # --------------------------
                 score = cosine_similarity(
                     entity1.embedding,
                     entity2.embedding,
@@ -60,7 +51,6 @@ class CrossPageLinker:
                     confidence=float(score),
                     source_page=-1,
                 )
-
                 graph.add_relation(relation)
 
                 added += 1

@@ -27,10 +27,7 @@ class GraphBuilder:
             cfg.preprocessing.overlap,
         )
 
-    ##################################################
-    # Process One Page
-    ##################################################
-
+     # Process One Page
     def process_page(self, page):
 
         text = TextCleaner.clean(page.text)
@@ -49,10 +46,7 @@ class GraphBuilder:
             chunk_page = copy(page)
             chunk_page.text = chunk
 
-            ##################################################
             # Entity Extraction
-            ##################################################
-
             entities = self.entity_extractor.extract(chunk_page)
 
             print(f"Extracted {len(entities)} entities")
@@ -64,10 +58,7 @@ class GraphBuilder:
                 entities
             )
 
-            ##################################################
             # Relation Extraction
-            ##################################################
-
             relations = self.relation_extractor.extract(
                 chunk_page,
                 entities,
@@ -89,42 +80,29 @@ class GraphBuilder:
                     entity_lookup,
                 )
 
-                ##################################################
                 # Skip missing entity
-                ##################################################
-
                 if source_entity is None:
-
                     print(
                         f"  Skip: source entity "
                         f"'{relation.source}' not found."
                     )
-
                     continue
 
                 if target_entity is None:
-
                     print(
                         f"  Skip: target entity "
                         f"'{relation.target}' not found."
                     )
-
                     continue
 
-                ##################################################
                 # Debug
-                ##################################################
-
                 print(
                     f"  • {source_entity.name}"
                     f" --{relation.relation}--> "
                     f"{target_entity.name}"
                 )
 
-                ##################################################
                 # Convert Name -> Internal ID
-                ##################################################
-
                 graph_relation = Relation(
                     source=source_entity.id,
                     target=target_entity.id,
@@ -135,28 +113,17 @@ class GraphBuilder:
                 )
 
                 self.graph.add_relation(graph_relation)
-
                 added_relations += 1
-
             total_entities += len(entities)
             total_relations += added_relations
 
-        ##################################################
         # Page Summary
-        ##################################################
-
         print(f"\nPage {page.page_number} Summary")
-
         print(f"Entities : {total_entities}")
-
         print(f"Relations: {total_relations}")
 
-    ##################################################
     # Process Whole Document
-    ##################################################
-
     def process_document(self, document):
-
         pages = document.pages
 
         if self.cfg.debug.enabled:
@@ -165,17 +132,13 @@ class GraphBuilder:
         print(f"\nProcessing {len(pages)} pages...\n")
 
         for page in pages:
-
             print("=" * 60)
             print(f"Processing Page {page.page_number}")
             print("=" * 60)
 
             self.process_page(page)
 
-        ##################################################
         # Graph Statistics
-        ##################################################
-
         print("\n========== Graph Statistics ==========")
 
         stats = self.graph.statistics()

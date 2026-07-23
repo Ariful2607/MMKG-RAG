@@ -1,11 +1,9 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
-
 class LLM:
 
     def __init__(self, cfg):
-
         self.provider = cfg.llm.provider
         self.model_name = cfg.llm.model
 

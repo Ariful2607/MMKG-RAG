@@ -4,14 +4,10 @@ class ContextBuilder:
 
         lines = []
 
-        ####################################################
         # Entities
-        ####################################################
-
         lines.append("## Entity Information\n")
 
         for entity in subgraph.entities.values():
-
             lines.append(f"Entity: {entity.name}")
 
             if entity.entity_type:
@@ -24,14 +20,10 @@ class ContextBuilder:
 
             lines.append("")
 
-        ####################################################
         # Relations
-        ####################################################
-
         lines.append("## Relationship Information\n")
 
         for relation in subgraph.relations:
-
             source = subgraph.entities[relation.source].name
             target = subgraph.entities[relation.target].name
 

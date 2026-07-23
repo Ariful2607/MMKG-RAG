@@ -20,35 +20,21 @@ class NeighborExpander:
         visited = set()
         queue = deque()
 
-        ####################################################
         # Initialize queue
-        ####################################################
-
         for entity, _ in retrieval_results:
-
             subgraph.add_entity(entity)
-
             visited.add(entity.id)
-
             queue.append((entity.id, 0))
 
-        ####################################################
         # BFS
-        ####################################################
-
         while queue:
-
             node_id, depth = queue.popleft()
-
             if depth >= hops:
                 continue
 
             neighbors = []
 
-            ####################################################
             # Outgoing edges
-            ####################################################
-
             for _, neighbor_id, edge_data in graph.graph.out_edges(
                 node_id,
                 data=True,
@@ -60,10 +46,7 @@ class NeighborExpander:
                     )
                 )
 
-            ####################################################
             # Incoming edges
-            ####################################################
-
             for neighbor_id, _, edge_data in graph.graph.in_edges(
                 node_id,
                 data=True,
@@ -75,28 +58,19 @@ class NeighborExpander:
                     )
                 )
 
-            ####################################################
             # Sort by confidence
-            ####################################################
-
             neighbors.sort(
                 key=lambda x: x[1].confidence,
                 reverse=True,
             )
 
-            ####################################################
             # Limit neighbors
-            ####################################################
-
             if max_neighbors is not None:
                 neighbors = neighbors[:max_neighbors]
 
-            ####################################################
+
             # Expand
-            ####################################################
-
             for neighbor_id, relation in neighbors:
-
                 neighbor = graph.entities[neighbor_id]
 
                 # Add entity
@@ -107,9 +81,7 @@ class NeighborExpander:
 
                 # Continue BFS
                 if neighbor.id not in visited:
-
                     visited.add(neighbor.id)
-
                     queue.append(
                         (
                             neighbor.id,

@@ -1,6 +1,5 @@
 from utils.similarity import cosine_similarity
 
-
 class GraphRetriever:
 
     def __init__(self, embedding_model):
@@ -21,7 +20,6 @@ class GraphRetriever:
         results = []
 
         for entity in graph.entities.values():
-
             if entity.embedding is None:
                 continue
 

@@ -20,9 +20,7 @@ class QwenVLModel(BaseModel):
             cfg.vlm.model
         )
 
-        # -------------------------------------------------
         # Select dtype automatically
-        # -------------------------------------------------
         dtype_cfg = cfg.vlm.dtype
 
         if dtype_cfg == "auto":
@@ -39,8 +37,6 @@ class QwenVLModel(BaseModel):
         else:
             torch_dtype = getattr(torch, dtype_cfg)
 
-        # -------------------------------------------------
-
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
             cfg.vlm.model,
             torch_dtype=torch_dtype,
@@ -56,7 +52,6 @@ class QwenVLModel(BaseModel):
     def generate(self, image, text="", prompt=""):
 
         img = Image.open(image).convert("RGB")
-
         messages = [
             {
                 "role": "user",

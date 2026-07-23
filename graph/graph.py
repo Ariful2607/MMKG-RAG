@@ -39,10 +39,7 @@ class KnowledgeGraph:
             print(f"Skip target '{relation.target}'")
             return
 
-        ####################################################
         # Skip duplicate relation
-        ####################################################
-
         if self.has_relation(
             relation.source,
             relation.target,
@@ -50,10 +47,7 @@ class KnowledgeGraph:
         ):
             return
 
-        ####################################################
         # Add relation
-        ####################################################
-
         self.relations.append(relation)
 
         self.graph.add_edge(

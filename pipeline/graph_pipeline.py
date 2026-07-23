@@ -161,9 +161,16 @@ class GraphPipeline:
             "retrieval": [
                 {
                     "entity": entity.name,
-                    "score": score,
+                    "score": round(float(score), 4),
                 }
                 for entity, score in retrieval_results
             ],
-            "subgraph": subgraph,
+            "subgraph": {
+                "num_entities": len(subgraph.entities),
+                "num_relations": len(subgraph.relations),
+                "entities": [
+                    entity.name
+                    for entity in subgraph.entities.values()
+                ],
+            },
         }

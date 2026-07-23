@@ -29,14 +29,11 @@ class EmbeddingGenerator:
 
     def generate(self, graph: KnowledgeGraph):
         print("\n========== Generating Entity Embeddings ==========")
-
         entities = list(graph.entities.values())
-
         texts = [
             self.build_text(entity)
             for entity in entities
         ]
-
         embeddings = self.embedding_model.encode_batch(texts)
 
         for entity, embedding in zip(entities, embeddings):
