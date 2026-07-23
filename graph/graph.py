@@ -2,6 +2,7 @@ import networkx as nx
 from graph import relation
 from graph.entity import Entity
 from graph.relation import Relation
+import pickle
 
 class KnowledgeGraph:
     def __init__(self):
@@ -98,3 +99,14 @@ class KnowledgeGraph:
             "num_nodes": self.graph.number_of_nodes(),
             "num_edges": self.graph.number_of_edges(),
         }
+
+    def save(self, path: str):
+        """Save graph to disk."""
+        with open(path, "wb") as f:
+            pickle.dump(self, f)
+
+    @staticmethod
+    def load(path: str):
+        """Load graph from disk."""
+        with open(path, "rb") as f:
+            return pickle.load(f)

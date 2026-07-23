@@ -1,7 +1,6 @@
 import json
 import re
 
-
 def extract_json(text: str):
     """
     Extract JSON object or array from LLM output.

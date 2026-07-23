@@ -1,7 +1,6 @@
 from graph.relation import Relation
 from utils.similarity import cosine_similarity
 
-
 class CrossPageLinker:
     def __init__(self, threshold: float = 0.90):
         self.threshold = threshold

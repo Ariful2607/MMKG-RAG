@@ -1,7 +1,5 @@
 from collections import deque
-
 from graph.graph import KnowledgeGraph
-
 
 class NeighborExpander:
 

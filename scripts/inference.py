@@ -1,46 +1,54 @@
 from omegaconf import OmegaConf
+from graph.graph import KnowledgeGraph
 from pipeline.graph_pipeline import GraphPipeline
 
-cfg = OmegaConf.load("configs/config.yaml")
-pipeline = GraphPipeline(cfg)
-graph = pipeline.build("data/raw/sample.pdf")
-question = "What is MegaRAG?"
-result = pipeline.answer(
-    graph=graph,
-    question=question,
-)
+def print_header(title):
 
-print("\n" + "=" * 70)
-print("QUESTION")
-print("=" * 70)
-print(question)
+    print("\n" + "=" * 70)
+    print(title)
+    print("=" * 70)
 
-print("\n" + "=" * 70)
-print("TOP-K RETRIEVAL")
-print("=" * 70)
 
-for i, item in enumerate(result["retrieval"], start=1):
-    print(
-        f"{i:>2}. "
-        f"{item['entity']:<45}"
-        f"score={item['score']:.4f}"
-    )
+def main():
+    cfg = OmegaConf.load("configs/config.yaml")
+    pipeline = GraphPipeline(cfg)
+    print_header("Loading Knowledge Graph")
+    graph = KnowledgeGraph.load("graph/megarag_graph.pkl")
+    print(graph.statistics())
+    while True:
+        question = input("\nQuestion (type 'exit' to quit): ")
+        if question.lower() == "exit":
+            break
 
-print("\n" + "=" * 70)
-print("EXPANDED SUBGRAPH")
-print("=" * 70)
+        result = pipeline.answer(
+            graph=graph,
+            question=question,
+        )
 
-print(f"Nodes     : {len(graph.entities)}")
-print(f"Relations : {len(graph.relations)}")
+        print_header("Top-k Retrieval")
 
-print("\n" + "=" * 70)
-print("LLM CONTEXT")
-print("=" * 70)
+        for i, item in enumerate(result["retrieval"], 1):
+            print(
+                f"{i:>2}. "
+                f"{item['entity']:<50}"
+                f"{item['score']:.4f}"
+            )
 
-print(result["context"])
+        print_header("Subgraph")
+        print(
+            f"Entities : {result['subgraph']['num_entities']}"
+        )
 
-print("\n" + "=" * 70)
-print("GENERATED ANSWER")
-print("=" * 70)
+        print(
+            f"Relations: {result['subgraph']['num_relations']}"
+        )
 
-print(result["answer"])
+        print("\nEntities")
+        for entity in result["subgraph"]["entities"]:
+
+            print(f" • {entity}")
+        print_header("Generated Answer")
+        print(result["answer"])
+
+if __name__ == "__main__":
+    main()
