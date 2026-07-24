@@ -1,0 +1,27 @@
+[
+    {
+        "id": 1,
+        "question": "What is MegaRAG?",
+        "ground_truth": "MegaRAG is a multimodal knowledge graph based retrieval augmented generation framework."
+    },
+    {
+        "id": 2,
+        "question": "What is a Knowledge Graph?",
+        "ground_truth": "A knowledge graph is a graph structure composed of entities and relations."
+    },
+    {
+        "id": 3,
+        "question": "What is a Multimodal Knowledge Graph?",
+        "ground_truth": "A multimodal knowledge graph represents entities using multiple modalities such as text and images."
+    },
+    {
+        "id": 4,
+        "question": "What is GraphRAG?",
+        "ground_truth": "GraphRAG is a retrieval augmented generation framework based on graph retrieval."
+    },
+    {
+        "id": 5,
+        "question": "What is LightRAG?",
+        "ground_truth": "LightRAG is a lightweight graph-based retrieval augmented generation method."
+    }
+]

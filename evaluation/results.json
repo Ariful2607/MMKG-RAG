@@ -1,0 +1,142 @@
+[
+    {
+        "question": "What is MegaRAG?",
+        "prediction": "MegaRAG is a multimodal, graph-based Retrieval-Augmented Generation model that enhances cross-modal reasoning.",
+        "ground_truth": "MegaRAG is a multimodal knowledge graph based retrieval augmented generation framework.",
+        "keyword_score": 0.36363636363636365,
+        "retrieval": [
+            {
+                "entity": "MegaRAG",
+                "score": 0.774
+            },
+            {
+                "entity": "MegaRAG Outperformance",
+                "score": 0.7316
+            },
+            {
+                "entity": "SubgraphRAG",
+                "score": 0.6223
+            },
+            {
+                "entity": "GraphRAG",
+                "score": 0.6098
+            },
+            {
+                "entity": "LightRAG",
+                "score": 0.6019
+            }
+        ]
+    },
+    {
+        "question": "What is a Knowledge Graph?",
+        "prediction": "A Knowledge Graph (KG) is a graph-based structure providing entity-centric structure and hierarchical summaries for reasoning.",
+        "ground_truth": "A knowledge graph is a graph structure composed of entities and relations.",
+        "keyword_score": 0.6,
+        "retrieval": [
+            {
+                "entity": "Knowledge Graphs (KGs)",
+                "score": 0.8001
+            },
+            {
+                "entity": "KG",
+                "score": 0.7877
+            },
+            {
+                "entity": "MMKG",
+                "score": 0.7449
+            },
+            {
+                "entity": "KG Construction",
+                "score": 0.7352
+            },
+            {
+                "entity": "Initial MMKG Construction",
+                "score": 0.6954
+            }
+        ]
+    },
+    {
+        "question": "What is a Multimodal Knowledge Graph?",
+        "prediction": "A Multimodal Knowledge Graph (MMKG) is a concept described as a Multimodal knowledge graph.",
+        "ground_truth": "A multimodal knowledge graph represents entities using multiple modalities such as text and images.",
+        "keyword_score": 0.35714285714285715,
+        "retrieval": [
+            {
+                "entity": "MMKG",
+                "score": 0.8326
+            },
+            {
+                "entity": "Indexing",
+                "score": 0.7792
+            },
+            {
+                "entity": "MMKG Refinement",
+                "score": 0.7728
+            },
+            {
+                "entity": "Cross-modal Grounding",
+                "score": 0.7715
+            },
+            {
+                "entity": "Initial MMKG Construction",
+                "score": 0.7637
+            }
+        ]
+    },
+    {
+        "question": "What is GraphRAG?",
+        "prediction": "GraphRAG is a graph-based RAG model introduced by Edge et al. (2024).",
+        "ground_truth": "GraphRAG is a retrieval augmented generation framework based on graph retrieval.",
+        "keyword_score": 0.2727272727272727,
+        "retrieval": [
+            {
+                "entity": "GraphRAG",
+                "score": 0.7501
+            },
+            {
+                "entity": "SubgraphRAG",
+                "score": 0.7013
+            },
+            {
+                "entity": "MegaRAG",
+                "score": 0.687
+            },
+            {
+                "entity": "LightRAG",
+                "score": 0.6841
+            },
+            {
+                "entity": "MMRAG",
+                "score": 0.6506
+            }
+        ]
+    },
+    {
+        "question": "What is LightRAG?",
+        "prediction": "LightRAG is a graph-based RAG model introduced by Guo et al. (2025).",
+        "ground_truth": "LightRAG is a lightweight graph-based retrieval augmented generation method.",
+        "keyword_score": 0.4444444444444444,
+        "retrieval": [
+            {
+                "entity": "LightRAG",
+                "score": 0.7589
+            },
+            {
+                "entity": "MegaRAG Outperformance",
+                "score": 0.5945
+            },
+            {
+                "entity": "MegaRAG",
+                "score": 0.5932
+            },
+            {
+                "entity": "GraphRAG",
+                "score": 0.5879
+            },
+            {
+                "entity": "SubgraphRAG",
+                "score": 0.587
+            }
+        ]
+    }
+]
