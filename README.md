@@ -1,11 +1,12 @@
 # MegaRAG Reproduction
 
-A Python reproduction of the ACL 2026 paper:
-
+> **A Python reproduction of the ACL 2026 paper**
+>
 > **MegaRAG: Multimodal Knowledge Graph-Based Retrieval-Augmented Generation**
 
-This project reproduces the end-to-end MegaRAG framework, including document parsing, multimodal entity extraction, relation extraction, knowledge graph construction, graph retrieval, neighborhood expansion, context building, and answer generation using local Qwen models.
+This repository reproduces the core architecture of **MegaRAG**, a Multimodal Knowledge Graph-based Retrieval-Augmented Generation (RAG) framework. The implementation constructs a multimodal knowledge graph from PDF documents and performs graph-based retrieval to support question answering using locally deployed Qwen models.
 
+Repository:
 https://github.com/Ariful2607/ExtMEGA-RAG
 
 ---
@@ -15,76 +16,78 @@ https://github.com/Ariful2607/ExtMEGA-RAG
 - Overview
 - Features
 - Project Structure
-- Environment Requirements
+- System Requirements
 - Installation
+- Model Preparation
 - Configuration
-- Models
 - Pipeline
-- Build Knowledge Graph
-- Run Inference
-- Evaluate
-- Expected Outputs
+- Usage
+  - Build Knowledge Graph
+  - Run Inference
+  - Evaluate
+- Output Files
 - Reproducing the Results
-- Notes
 - Limitations
+- Future Improvements
 - References
 
 ---
 
 # Overview
 
-MegaRAG enhances Retrieval-Augmented Generation (RAG) by constructing a Multimodal Knowledge Graph (MMKG) from PDF documents.
+Traditional Retrieval-Augmented Generation (RAG) retrieves relevant text chunks before generating answers. MegaRAG extends this paradigm by constructing a **Multimodal Knowledge Graph (MMKG)** from documents, allowing retrieval over graph entities and relations rather than plain text.
 
-Instead of retrieving plain text chunks, MegaRAG retrieves graph entities and their neighboring evidence before generating responses.
+This reproduction implements the complete end-to-end pipeline:
 
-This reproduction implements the complete pipeline locally using:
+- PDF Parsing
+- Entity Extraction
+- Relation Extraction
+- Knowledge Graph Construction
+- Graph Retrieval
+- Neighbor Expansion
+- Context Construction
+- LLM-based Answer Generation
 
-- Qwen2.5-VL
-- Qwen2.5
-- SentenceTransformer embeddings
+The implementation uses **local models**, enabling offline inference without relying on proprietary APIs.
 
 ---
 
 # Features
 
-Implemented components:
+Implemented modules include:
 
-- PDF Parsing
+- PDF Parser
 - Page Chunking
 - Multimodal Entity Extraction
 - Relation Extraction
-- Knowledge Graph Construction
+- Knowledge Graph Builder
 - Duplicate Entity Merging
-- Embedding Generation
 - Cross-page Entity Linking
-- Graph Retrieval
+- Embedding Generation
+- Graph Retriever
 - Neighbor Expansion
 - Context Builder
-- LLM-based Answer Generation
+- Qwen-based Generator
 - Evaluation Script
 
 ---
 
 # Project Structure
 
-```
+```text
 MMKG-RAG/
 
-│
 ├── configs/
 │   └── config.yaml
 │
 ├── parser/
-│
 ├── extraction/
-│
 ├── graph/
-│
 ├── models/
-│
 ├── pipeline/
-│
 ├── prompts/
+├── preprocessing/
+├── utils/
 │
 ├── scripts/
 │   ├── build_graph.py
@@ -98,22 +101,26 @@ MMKG-RAG/
 ├── graph/
 │   └── megarag_graph.pkl
 │
+├── requirements.txt
 └── README.md
 ```
 
 ---
 
-# Environment Requirements
+# System Requirements
 
-Recommended:
+Recommended hardware:
 
-- Python 3.11+
-- CUDA 12.4 or newer
-- NVIDIA GPU (24GB+ VRAM recommended)
+| Component | Recommendation |
+|------------|---------------|
+| Python | 3.11+ |
+| GPU | NVIDIA RTX GPU |
+| VRAM | 24 GB or higher |
+| CUDA | 12.8+ |
 
-Tested on
+Tested on:
 
-- RTX 5090
+- NVIDIA RTX 5090
 - CUDA 13.1
 - Windows 11
 
@@ -121,7 +128,19 @@ Tested on
 
 # Installation
 
-Create a virtual environment
+## 1. Clone Repository
+
+```bash
+git clone https://github.com/Ariful2607/ExtMEGA-RAG.git
+
+cd ExtMEGA-RAG
+```
+
+---
+
+## 2. Create Python Environment
+
+Using Conda:
 
 ```bash
 conda create -n mmkg-rag python=3.11
@@ -129,28 +148,70 @@ conda create -n mmkg-rag python=3.11
 conda activate mmkg-rag
 ```
 
-Install dependencies
+---
+
+## 3. Upgrade pip
+
+```bash
+python -m pip install --upgrade pip
+```
+
+---
+
+## 4. Install PyTorch
+
+Install the PyTorch version compatible with your CUDA version.
+
+Example (CUDA 12.8):
+
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+```
+
+For other CUDA versions:
+
+https://pytorch.org/get-started/locally/
+
+---
+
+## 5. Install Project Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-If `requirements.txt` is unavailable:
+The main dependencies include:
 
-```bash
-pip install
+- accelerate
+- transformers
+- sentence-transformers
+- PyMuPDF
+- faiss-cpu
+- networkx
+- timm
+- Pillow
+- opencv-python
+- pandas
+- scikit-learn
+- scipy
+- omegaconf
+- tqdm
 
-torch
-transformers
-sentence-transformers
-networkx
-numpy
-opencv-python
-pdfplumber
-Pillow
-omegaconf
-tqdm
-```
+---
+
+# Model Preparation
+
+This project uses locally deployed Hugging Face models.
+
+Required models:
+
+| Component | Model |
+|------------|-----------------------------|
+| Vision-Language Model | Qwen2.5-VL |
+| Text Generation Model | Qwen2.5 |
+| Embedding Model | BAAI/bge-large-en-v1.5 |
+
+Download the required models and update their locations in the configuration file.
 
 ---
 
@@ -158,27 +219,28 @@ tqdm
 
 Edit
 
-```
+```text
 configs/config.yaml
 ```
 
-Example
+Example:
 
 ```yaml
 models:
 
-  qwen_vl: path/to/Qwen2.5-VL
+  qwen_vl:
+    model_path: models/Qwen2.5-VL
 
-  llm: path/to/Qwen2.5
+  llm:
+    model_path: models/Qwen2.5
 
 embedding:
 
-  model: BAAI/bge-large-en-v1.5
+  model_name: BAAI/bge-large-en-v1.5
 
 retrieval:
 
   top_k: 5
-
   hops: 1
 
 graph:
@@ -188,90 +250,71 @@ graph:
 
 ---
 
-# Models
-
-The following local models are used.
-
-| Component | Model |
-|------------|------------------------------|
-| Vision-Language | Qwen2.5-VL |
-| Text Generation | Qwen2.5 |
-| Embedding | BAAI/bge-large-en-v1.5 |
-
----
-
 # Pipeline
 
-```
+```text
 PDF
-
-↓
-
+ │
+ ▼
 Parser
-
-↓
-
+ │
+ ▼
 Chunk
-
-↓
-
+ │
+ ▼
 Entity Extraction
-
-↓
-
+ │
+ ▼
 Relation Extraction
-
-↓
-
+ │
+ ▼
 Knowledge Graph
-
-↓
-
+ │
+ ▼
 Duplicate Merge
-
-↓
-
+ │
+ ▼
 Embedding Generation
-
-↓
-
+ │
+ ▼
 Cross-page Linking
-
-↓
-
+ │
+ ▼
 Retriever
-
-↓
-
+ │
+ ▼
 Neighbor Expansion
-
-↓
-
+ │
+ ▼
 Context Builder
-
-↓
-
+ │
+ ▼
 Generator
+ │
+ ▼
+Answer
 ```
 
 ---
 
-# Step 1: Build Knowledge Graph
+# Usage
 
-Run
+## Step 1 — Build the Knowledge Graph
+
+Run:
 
 ```bash
 python -m scripts.build_graph
 ```
 
-Expected output
+Expected output:
 
-```
+```text
 Building Knowledge Graph...
 
 Duplicate Merge...
 
-Generating Embeddings...
+Embedding Generation...
 
 Cross-page Linking...
 
@@ -279,28 +322,28 @@ Final Graph
 
 Entities : XX
 
-Relations : XX
+Relations: XX
 ```
 
-Graph will be saved as
+The generated graph will be saved as:
 
-```
+```text
 graph/megarag_graph.pkl
 ```
 
 ---
 
-# Step 2: Run Inference
+## Step 2 — Run Inference
 
-Run
+Run:
 
 ```bash
 python -m scripts.inference
 ```
 
-Example
+Example:
 
-```
+```text
 Question:
 
 What is MegaRAG?
@@ -312,50 +355,39 @@ MegaRAG is a multimodal graph-based Retrieval-Augmented Generation framework...
 
 ---
 
-# Step 3: Evaluate
+## Step 3 — Evaluate
 
-Run
+Run:
 
 ```bash
 python -m scripts.evaluate
 ```
 
-Evaluation uses
+Evaluation questions are stored in:
 
-```
+```text
 evaluation/questions.json
 ```
 
-Example
+Generated results:
 
-```json
-[
-  {
-    "question": "...",
-    "ground_truth": "..."
-  }
-]
-```
-
-Results
-
-```
+```text
 evaluation/results.json
 ```
 
-Average score example
+Example summary:
 
-```
-Average F1 : 0.81
+```text
+Average F1 Score: 0.81
 ```
 
 ---
 
-# Expected Outputs
+# Output Files
 
 Knowledge Graph
 
-```
+```text
 graph/
 
     megarag_graph.pkl
@@ -363,7 +395,7 @@ graph/
 
 Evaluation
 
-```
+```text
 evaluation/
 
     questions.json
@@ -375,27 +407,24 @@ evaluation/
 
 # Reproducing the Results
 
-1. Download the PDF document.
+To reproduce the implementation:
 
-2. Configure model paths in
-
-```
-configs/config.yaml
-```
-
-3. Build the knowledge graph
+1. Install the required environment.
+2. Download the required Hugging Face models.
+3. Configure `configs/config.yaml`.
+4. Build the knowledge graph:
 
 ```bash
 python -m scripts.build_graph
 ```
 
-4. Run inference
+5. Run inference:
 
 ```bash
 python -m scripts.inference
 ```
 
-5. Evaluate
+6. Run evaluation:
 
 ```bash
 python -m scripts.evaluate
@@ -403,27 +432,28 @@ python -m scripts.evaluate
 
 ---
 
-# Notes
-
-This implementation is intended as a reproduction of the MegaRAG architecture.
-
-Some implementation details differ from the original paper:
-
-- Local Qwen models are used instead of proprietary APIs.
-- The evaluation dataset may differ from the original benchmark.
-- Entity extraction quality depends on the selected VLM.
-- Results may vary depending on hardware and generation parameters.
-
----
-
 # Limitations
+
+This implementation focuses on reproducing the overall MegaRAG architecture.
 
 Current limitations include:
 
-- Small-scale graph construction during testing.
-- Limited entity canonicalization.
-- Simple evaluation protocol.
-- No benchmark datasets from the original paper are included.
+- Evaluation is performed on a small-scale dataset.
+- Entity canonicalization can be further improved.
+- Retrieval quality depends on entity extraction quality.
+- Benchmark datasets from the original paper are not included.
+
+---
+
+# Future Improvements
+
+Potential future work includes:
+
+- Support for larger document collections.
+- Improved entity canonicalization.
+- More sophisticated graph retrieval strategies.
+- Evaluation using the original MegaRAG benchmark datasets.
+- Integration with additional multimodal foundation models.
 
 ---
 
@@ -431,6 +461,6 @@ Current limitations include:
 
 MegaRAG:
 
-MegaRAG: Multimodal Knowledge Graph-Based Retrieval-Augmented Generation.
+**MegaRAG: Multimodal Knowledge Graph-Based Retrieval-Augmented Generation**
 
 ACL 2026.
