@@ -6,6 +6,8 @@ A Python reproduction of the ACL 2026 paper:
 
 This project reproduces the end-to-end MegaRAG framework, including document parsing, multimodal entity extraction, relation extraction, knowledge graph construction, graph retrieval, neighborhood expansion, context building, and answer generation using local Qwen models.
 
+https://github.com/Ariful2607/ExtMEGA-RAG
+
 ---
 
 # Table of Contents
